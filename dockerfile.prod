@@ -1,0 +1,53 @@
+
+#Dependencias
+from node:21-alpine3.19 as deps
+
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+
+RUN npm install
+
+
+
+# Builder - contruye la aplicación
+
+from node:21-alpine3.19 as build
+WORKDIR /usr/src/app
+
+#Copiar de dev los módulos de node 
+
+COPY --from=deps /usr/src/app/node_modules ./node_modules
+
+#Copiar todo el código fuente de la aplicación.
+COPY . .
+
+#RUN npm run test 
+#Si falla testing falla no se ejecuta la app de nest. 
+
+RUN npm run build 
+
+#Limpiar los módulos de node que no requiero. 
+
+RUN npm ci -f --only=production && npm cache clean --force
+
+#Aqui podemos genear las migraciones de BD.
+
+#Crear la imagen final de docker 
+from node:21-alpine3.19 as prod
+WORKDIR /usr/src/app
+
+copy --from=build /usr/src/app/node_modules ./node_modules
+
+#Copiar todo el código fuente de la aplicación.
+COPY --from=build /usr/src/app/dist ./dist
+
+
+ENV NODE_ENV=production
+
+USER node
+
+EXPOSE 3000
+
+CMD ["node", "dist/main.js"]
+#Aqui podemos genear las migraciones de BD.
