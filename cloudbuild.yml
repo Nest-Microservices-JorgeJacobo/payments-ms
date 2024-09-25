@@ -4,7 +4,7 @@ steps:
       [
         "build",
         "-t",
-        "us-east4-docker.pkg.dev/nest-tienda-microservices/image-registry/payments-ms",
+        "us-east1-docker.pkg.dev/nest-ms-tienda/image-registry/payments-ms",
         "-f",
         "dockerfile.prod",
         "--platform=linux/amd64",
@@ -14,7 +14,7 @@ steps:
     args:
       [
         "push",
-        "us-east4-docker.pkg.dev/nest-tienda-microservices/image-registry/payments-ms",
+        "us-east1-docker.pkg.dev/nest-ms-tienda/image-registry/payments-ms",
       ]
 options:
   logging: CLOUD_LOGGING_ONLY
